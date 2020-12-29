@@ -32,9 +32,9 @@ public class PostController {
 	public List<Post> GetPostsofone(@PathVariable("userid") String userid) throws JsonProcessingException {
 		 return postDao.getAllPostsofOne(userid);
 	}
-	@GetMapping("/getAllPostsofsome/{userids}")
-	public List<Post> GetPostsofone(@RequestParam(required=false) List<String> userids){
-		 return postDao.getAllPostsofSome(userids);
+	@GetMapping("/posts")
+	public List<Post> getfeed(@RequestBody List<String> users) {
+		 return postDao.getAllPostsofSome(users);
 	}
 	@PostMapping("/post")
 	 public void create(@RequestBody Post post) {

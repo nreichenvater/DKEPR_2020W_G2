@@ -44,15 +44,11 @@ public class PostDao {
 	}
 	public List<Post> getAllPostsofSome(List<String> users) {
 		Query<Post> query=datastore.find(Post.class);
-		int x=0;
 		for(String i:users) {
 			query.or(
-				query.criteria("userid").equal(users.get(x))
-				
+				query.criteria("userid").equal(i)
 			);
-			x++;
 		}
-		
 		return query.asList();
 	}
 	
