@@ -16,7 +16,6 @@ import socialService.server.ResponseStatus;
 public class SocialServiceEndpoint {
 	
 	public SocialServiceEndpoint(SocialServiceUserDao socialServiceUserDao) {
-	
 		options("/*",
 		        (request, response) -> {
 
