@@ -13,6 +13,8 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import apigateway.dto.Post;
+
 public class PostController {
 
 	private ServiceController serviceController;
@@ -82,15 +84,14 @@ public class PostController {
 				return "Der Feed konnte nicht geladen werden";
 			}
 				
-			String feed = getFeed(users);
+			List<Post> feed = getFeed(users);
 			if(feed == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
 			}
 			
 			response.status(200);
-			response.body(feed);
-			return "";
+			return new Gson().toJson(feed);
 		});
 		
 		get("/post", (request, response) -> {
@@ -102,21 +103,17 @@ public class PostController {
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			
-			List<String> users = socialController.getUserAndFollowed(user, request.body());
-			if(users == null) {
-				response.status(500);
-				return "Der Feed konnte nicht geladen werden";
-			}
+			List<String> users = new ArrayList<String>();
+			users.add(user);
 				
-			String feed = getRecent(users);
+			List<Post> feed = getFeed(users);
 			if(feed == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
 			}
 			
 			response.status(200);
-			response.body(feed);
-			return "";
+			return new Gson().toJson(feed);
 		});
 		
 		get("/recent", (request, response) -> {
@@ -131,15 +128,14 @@ public class PostController {
 			List<String> users = new ArrayList<String>();
 			users.add(user);
 				
-			String feed = getFeed(users);
+			List<Post> feed = getRecent(users);
 			if(feed == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
 			}
 			
 			response.status(200);
-			response.body(feed);
-			return "";
+			return new Gson().toJson(feed);
 		});
 		
 	}
@@ -186,7 +182,7 @@ public class PostController {
         return response.code();
 	}
 	
-	private String getFeed(List<String> users) {
+	private List<Post> getFeed(List<String> users) {
 		String requestBody = new Gson().toJson(users);
 		System.out.println(users);
 		RequestBody body = RequestBody.create(JSON, requestBody);
@@ -197,18 +193,19 @@ public class PostController {
             .build();
         
         Response response;
-        String feed;
+        List<Post> feed;
 		try {
 			response = httpClient.newCall(request).execute();
-			feed = response.body().toString();
+			feed = new Gson().fromJson(response.body().string(), List.class);
 		} catch (IOException e) {
 			return null;
 		}
         
-        return feed;
+        System.out.println("do" + feed.toString());
+		return feed;
 	}
 	
-	private String getRecent(List<String> users) {
+	private List<Post> getRecent(List<String> users) {
 		String requestBody = new Gson().toJson(users);
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
@@ -218,10 +215,10 @@ public class PostController {
             .build();
         
         Response response;
-        String feed;
+        List<Post> feed;
 		try {
 			response = httpClient.newCall(request).execute();
-			feed = response.body().toString();
+			feed = new Gson().fromJson(response.body().string(), List.class);
 		} catch (IOException e) {
 			return null;
 		}

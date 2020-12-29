@@ -6,6 +6,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.springframework.expression.spel.ast.Selection;
@@ -43,12 +44,15 @@ public class PostDao {
 
 	}
 	public List<Post> getAllPostsofSome(List<String> users) {
-		Query<Post> query=datastore.find(Post.class);
-		for(String i:users) {
-			query.or(
-				query.criteria("userid").equal(i)
-			);
+		List<Post> res = new ArrayList<Post>();
+		for(String i : users) {
+			res.addAll(filterPosts(datastore.find(Post.class),i));
 		}
+		return res;
+	}
+	
+	public List<Post> filterPosts(Query<Post> query, String user){
+		query.criteria("userid").equal(user);
 		return query.asList();
 	}
 	

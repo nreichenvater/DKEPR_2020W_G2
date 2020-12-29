@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 
 import data.Post;
 @RestController
@@ -32,9 +33,9 @@ public class PostController {
 	public List<Post> GetPostsofone(@PathVariable("userid") String userid) throws JsonProcessingException {
 		 return postDao.getAllPostsofOne(userid);
 	}
-	@GetMapping("/posts")
-	public List<Post> getfeed(@RequestBody List<String> users) {
-		 return postDao.getAllPostsofSome(users);
+	@PostMapping("/posts")
+	public String getfeed(@RequestBody List<String> users) {
+		return new Gson().toJson(postDao.getAllPostsofSome(users));
 	}
 	@PostMapping("/post")
 	 public void create(@RequestBody Post post) {
