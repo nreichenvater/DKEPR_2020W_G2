@@ -10,10 +10,6 @@
   <groupId>Mooder_Post_Spring</groupId>
   <artifactId>Mooder_Post_Spring</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-<properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>8</java.version>
-  </properties>
   
   <dependencies>
   <dependency>

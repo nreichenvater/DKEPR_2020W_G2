@@ -69,6 +69,7 @@ public class ServiceController {
 				 return "bad request";
 			 }
 			 
+			 System.out.println("Service mit Typ: " + type + " registriert " + ip + ":" + port);
 			 response.status(200);
 			 return "registered " + type + " service at " + ip + ":" + port;
 		});

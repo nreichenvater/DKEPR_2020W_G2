@@ -34,12 +34,12 @@ public class PostController {
 		post("/post", (request,response) ->  {
 			String authorization = request.headers("Authorization");
 			String user = request.headers("user");
-			
+			/*
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
-			
+			*/
 			int status = createPost(request.body(), user);
 			response.status(status);
 			if(status == 200) {

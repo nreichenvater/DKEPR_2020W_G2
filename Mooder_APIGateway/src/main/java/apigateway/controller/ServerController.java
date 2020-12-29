@@ -1,5 +1,7 @@
 package apigateway.controller;
 
+import spark.Spark;
+
 public class ServerController {
 	
 	private ServiceController serviceController;
@@ -8,6 +10,7 @@ public class ServerController {
 	private SocialController socialController;
 	
 	public ServerController() {
+		Spark.port(8081);
 		serviceController = new ServiceController();
 		userController = new UserController(serviceController);
 		socialController = new SocialController(serviceController, userController);
