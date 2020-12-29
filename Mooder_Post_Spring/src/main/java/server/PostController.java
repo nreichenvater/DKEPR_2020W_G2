@@ -1,5 +1,7 @@
 package server;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +38,7 @@ public class PostController {
 	}
 	@PostMapping("/post")
 	 public void create(@RequestBody Post post) {
+	  post.setTimestamp(Timestamp.from(Instant.now()));
 	  postDao.addPost(post);
 	 }
 	

@@ -70,13 +70,13 @@ public class PostController {
 		get("/feed", (request, response) -> {
 			String authorization = request.headers("Authorization");
 			String user = request.headers("user");
-			
+			/*
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
-			
-			List<String> users = socialController.getUserAndFollowed(user);
+			*/
+			List<String> users = socialController.getUserAndFollowed(user, request.body());
 			if(users == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
@@ -102,7 +102,7 @@ public class PostController {
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			
-			List<String> users = socialController.getUserAndFollowed(user);
+			List<String> users = socialController.getUserAndFollowed(user, request.body());
 			if(users == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
@@ -188,6 +188,7 @@ public class PostController {
 	
 	private String getFeed(List<String> users) {
 		String requestBody = new Gson().toJson(users);
+		System.out.println(users);
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()

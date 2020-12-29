@@ -113,7 +113,6 @@ public class ServiceController {
 				con.setRequestMethod("GET");
 				if(con.getResponseCode() != 200) {
 					registeredPostServices.remove(rs);
-					System.out.println("Anzahl Post Services:" + registeredPostServices.size());
 				}
 			} catch (IOException e) {
 				System.out.println(e.getMessage());

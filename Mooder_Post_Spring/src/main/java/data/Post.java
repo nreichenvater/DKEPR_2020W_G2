@@ -5,6 +5,7 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 
 @Entity
@@ -26,7 +27,7 @@ public class Post {
 		this.userid = userid;
 		this.post = post;
 		this.mood = mood;
-		this.timestamp = timestamp;
+		this.timestamp = Timestamp.from(Instant.now());
 		this.hashtags = hashtags;
 	}
 
