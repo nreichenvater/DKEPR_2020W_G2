@@ -81,7 +81,7 @@ public class ServiceController {
 		};
 		
 		ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
-		exec.scheduleAtFixedRate(pingRunnable , 0, 2, TimeUnit.MINUTES);
+		exec.scheduleAtFixedRate(pingRunnable , 0, 1, TimeUnit.MINUTES);
 		
 	}
 	
@@ -113,6 +113,7 @@ public class ServiceController {
 				con.setRequestMethod("GET");
 				if(con.getResponseCode() != 200) {
 					registeredPostServices.remove(rs);
+					System.out.println("Anzahl Post Services:" + registeredPostServices.size());
 				}
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
@@ -158,10 +159,12 @@ public class ServiceController {
 	}
 	
 	public RegisteredService nextPostService() {
+		System.out.println("nextPostServiceCounter:" + nextPostServiceCounter);
 		nextPostServiceCounter++;
 		if(nextPostServiceCounter >= registeredPostServices.size()) {
 			nextPostServiceCounter = 0;
 		}
+		System.out.println("nextPostServiceCounter:" + nextPostServiceCounter);
 		return registeredPostServices.get(nextPostServiceCounter);
 	}
 	

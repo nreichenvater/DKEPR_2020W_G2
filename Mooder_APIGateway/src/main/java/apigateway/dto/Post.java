@@ -1,41 +1,22 @@
-package data;
-
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
+package apigateway.dto;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-@Entity
 public class Post {
-	@Id
-	public ObjectId _id;
-	public String userid;
-	public String post;
-	public String mood;
-	public Timestamp timestamp;
-	public ArrayList<String> hashtags; 
 	
+	private String userid;
+	private String post;
+	private String mood;
+	private Timestamp timestamp;
+	private ArrayList<String> hashtags; 
 	
-	public Post() {
-		
-	}
 	public Post(String userid, String post, String mood, Timestamp timestamp, ArrayList<String> hashtags) {
-		super();
 		this.userid = userid;
 		this.post = post;
 		this.mood = mood;
 		this.timestamp = timestamp;
 		this.hashtags = hashtags;
-	}
-
-	public ObjectId get_id() {
-		return _id;
-	}
-
-	public void set_id(ObjectId  _id) {
-		this._id = _id;
 	}
 
 	public String getUserid() {
@@ -77,4 +58,5 @@ public class Post {
 	public void setHashtags(ArrayList<String> hashtags) {
 		this.hashtags = hashtags;
 	}
+	
 }

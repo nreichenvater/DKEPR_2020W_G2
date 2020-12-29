@@ -10,6 +10,7 @@ public class RegisteredService {
 		this.ip = ip;
 		this.port = port;
 		fullIp = "http://" + ip + ":" + port;
+		System.out.println(fullIp);
 	}
 
 	public String getIp() {

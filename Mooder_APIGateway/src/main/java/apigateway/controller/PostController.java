@@ -145,21 +145,25 @@ public class PostController {
 	}
 	
 	private int createPost(String requestBody, String user) {
+		System.out.println("create post start");
+		System.out.println("request body: " + requestBody);
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()
             .url(serviceController.nextPostService().getFullIp() + "/post")
-            .addHeader("user", user)
             .post(body)
             .build();
         
         Response response;
 		try {
+			System.out.println("try");
 			response = httpClient.newCall(request).execute();
 		} catch (IOException e) {
+			System.out.println(e.getMessage());
 			return 0;
 		}
         
+		System.out.println(response.code());
         return response.code();
 	}
 	

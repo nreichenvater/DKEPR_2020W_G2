@@ -38,4 +38,10 @@ public class PostController {
 	 public void create(@RequestBody Post post) {
 	  postDao.addPost(post);
 	 }
+	
+	@GetMapping("/ping") 
+	public String ping() {
+		return "gepingt";
+	}
+	
 }
