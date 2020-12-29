@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="Oracle XE">
-  <database-model serializer="dbm" dbms="ORACLE" family-id="ORACLE" format-version="4.19">
+  <database-model serializer="dbm" dbms="ORACLE" family-id="ORACLE" format-version="4.20">
     <root id="1">
       <ServerVersion>18.0.0.0.0</ServerVersion>
     </root>
@@ -50019,6 +50019,7 @@
     </table>
     <table id="7180" parent="34" name="USER_DKE">
       <ObjectId>74985</ObjectId>
+      <Outdated>1</Outdated>
       <CreatedTimestamp>2020-11-15.15:54:36</CreatedTimestamp>
       <ModifiedTimestamp>2020-11-15.15:54:36</ModifiedTimestamp>
       <TemporaryPreserve>1</TemporaryPreserve>

@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c37658f0-610a-4e6d-8267-93512dd17b82" name="Default Changelist" comment="" />
+    <list default="true" id="c37658f0-610a-4e6d-8267-93512dd17b82" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/UserService/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserService/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/UserService/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserService/target/classes/controller/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/UserService/target/classes/controller/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserService/target/classes/service/Service.class" beforeDir="false" afterPath="$PROJECT_DIR$/UserService/target/classes/service/Service.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,8 +31,10 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/UserService" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -36,13 +45,11 @@
       <option name="presentableId" value="Default" />
       <updated>1605366087569</updated>
       <workItem from="1605366091016" duration="45000" />
+      <workItem from="1609152016995" duration="39000" />
     </task>
     <servers />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="551" y="181" key="new project wizard" timestamp="1605366134038">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="551" y="181" key="new project wizard/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605366134038" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

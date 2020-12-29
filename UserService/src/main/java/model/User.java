@@ -132,15 +132,14 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "nickname='" + nickname + '\'' +
-                ", first_name='" + first_name + '\'' +
-                ", last_name='" + last_name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", portrait=" + portrait +
-                ", birthdate=" + birthdate +
-                ", sex=" + sex +
+        return "{" +
+                "'nickname':'" + nickname + '\'' +
+                ", 'first_name':'" + first_name + '\'' +
+                ", 'last_name':'" + last_name + '\'' +
+                ", 'email':'" + email + '\'' +
+                ", 'portrait':" + portrait +
+                ", 'birthdate':" + birthdate +
+                ", 'sex':" + sex +
                 '}';
     }
 }
