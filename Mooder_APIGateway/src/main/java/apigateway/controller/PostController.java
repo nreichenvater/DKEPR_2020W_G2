@@ -34,15 +34,16 @@ public class PostController {
 	public void initRoutes(){
 		
 		post("/post", (request,response) ->  {
-			String authorization = request.headers("Authorization");
-			String user = request.headers("user");
+			System.out.println("erstellen");
+			//String authorization = request.headers("Authorization");
+			//String user = request.headers("user");
 			/*
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			*/
-			int status = createPost(request.body(), user);
+			int status = createPost(request.body(), "testuser");
 			response.status(status);
 			if(status == 200) {
 				return "Der Post wurde erfolgreich angelegt";
@@ -69,15 +70,17 @@ public class PostController {
 			return "Der Post konnte nicht gelöscht werden";
 		});
 		
-		get("/feed", (request, response) -> {
-			String authorization = request.headers("Authorization");
-			String user = request.headers("user");
+		post("/feed", (request, response) -> {
+			//String authorization = request.headers("Authorization");
+			//String user = request.headers("user");
+			String user = "test";
 			/*
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			*/
+			System.out.println("body" + request.body());
 			List<String> users = socialController.getUserAndFollowed(user, request.body());
 			if(users == null) {
 				response.status(500);

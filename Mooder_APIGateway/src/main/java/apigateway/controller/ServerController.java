@@ -14,7 +14,7 @@ public class ServerController {
 		serviceController = new ServiceController();
 		userController = new UserController(serviceController);
 		socialController = new SocialController(serviceController, userController);
-		postController = new PostController(serviceController, userController, socialController);
+		new PostController(serviceController, userController, socialController);
 	}
 	
 }

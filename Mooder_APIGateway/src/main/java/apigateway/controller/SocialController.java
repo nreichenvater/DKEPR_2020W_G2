@@ -30,6 +30,7 @@ public class SocialController {
 	}
 	
 	public void initRoutes() {
+		
 		post("/follow", (request,response) ->  {
 			String authorization = request.headers("Authorization");
 			String user = request.headers("user");
