@@ -90,12 +90,12 @@ public class ServiceController {
 		//user
 		for(RegisteredService rs : registeredUserServices) {
 			String urlString = rs.getFullIp() + "/ping";
-			System.out.println(urlString);
 			try {
 				URL url = new URL(urlString);
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				con.setRequestMethod("GET");
 				if(con.getResponseCode() != 200) {
+					System.out.println("Removing Service " + rs.getFullIp() + " because not responding to ping.");
 					registeredUserServices.remove(rs);
 				}
 			} catch (IOException e) {
@@ -112,6 +112,7 @@ public class ServiceController {
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				con.setRequestMethod("GET");
 				if(con.getResponseCode() != 200) {
+					System.out.println("Removing Service " + rs.getFullIp() + " because not responding to ping.");
 					registeredPostServices.remove(rs);
 				}
 			} catch (IOException e) {
@@ -128,6 +129,7 @@ public class ServiceController {
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				con.setRequestMethod("GET");
 				if(con.getResponseCode() != 200) {
+					System.out.println("Removing Service " + rs.getFullIp() + " because not responding to ping.");
 					registeredSocialServices.remove(rs);
 				}
 			} catch (IOException e) {

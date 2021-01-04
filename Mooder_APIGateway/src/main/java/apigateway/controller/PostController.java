@@ -97,14 +97,14 @@ public class PostController {
 			return new Gson().toJson(feed);
 		});
 		
-		get("/post", (request, response) -> {
-			String authorization = request.headers("Authorization");
-			String user = request.headers("user");
-			
-			if(!userController.userLoggedIn(authorization, user)) {
+		post("/posts", (request, response) -> {
+			//String authorization = request.headers("Authorization");
+			//String user = request.headers("user");
+			String user = "seppHati1";
+			/*if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
-			}
+			}*/
 			
 			List<String> users = new ArrayList<String>();
 			users.add(user);
