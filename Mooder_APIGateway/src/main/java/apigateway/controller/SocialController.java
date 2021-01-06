@@ -14,6 +14,8 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import apigateway.dto.Post;
+
 import static spark.Spark.*;
 
 public class SocialController {
@@ -47,6 +49,27 @@ public class SocialController {
 			}
 			
 			return "Der Follow konnte nicht angelegt werden";
+		});
+		
+		get("/followed", (request, response) -> {
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
+			
+			if(!userController.userLoggedIn(authorization, user)) {
+				response.status(403);
+				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
+			}
+			
+			List<String> users = getUserAndFollowed(user, request.body());
+			if(users == null) {
+				response.status(500);
+				return "Der Feed konnte nicht geladen werden";
+			}
+			
+			//ersten eintrag löschen (user selbst)
+			
+			response.status(200);
+			return new Gson().toJson(users);
 		});
 	}
 

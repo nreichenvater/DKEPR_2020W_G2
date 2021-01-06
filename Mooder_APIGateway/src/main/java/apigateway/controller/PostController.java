@@ -74,6 +74,14 @@ public class PostController {
 			//String authorization = request.headers("Authorization");
 			//String user = request.headers("user");
 			String user = "test";
+			
+			
+			/*
+			 * User u = new User(user);
+			 * String requestBody = new Gson().toJson(u);
+			 */
+			
+			
 			/*
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
