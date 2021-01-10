@@ -65,15 +65,20 @@ public class UserController {
 	
 	private int doRegistration(String requestBody) throws MalformedURLException, IOException {
 		
+		System.out.println(requestBody);
+		
 		String step = "user";
 		int responseStatus = 0;
 		boolean done = false;
 		
 		String username = new JsonParser().parse(requestBody).getAsJsonObject().get("username").getAsString();
 		
+		System.out.println("step " + step);
+		
 		while(!done) {
 			switch(step) {
 			case "user":
+				System.out.println("jetzt user im userservice anlegen");
 				JsonObject userResponse = doPostRequest(requestBody, "", serviceController.nextUserService().getFullIp() + "/register");
 				if(userResponse.get("status").getAsInt() == 200) {
 					step = "social";
@@ -114,10 +119,12 @@ public class UserController {
 	
 	private JsonObject doPostRequest(String requestBody, String requestHeader, String requestUrl) throws UnsupportedEncodingException, IOException {
 		
+		System.out.println("postrequest mit body " + requestBody);
+		
 		URL url = new URL(requestUrl);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("POST");
-		con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		con.setRequestProperty("Content-Type", "application/json"); //; charset=UTF-8
 		con.setRequestProperty("Accept", "application/json");
 		con.setDoOutput(true);
 

@@ -88,6 +88,7 @@ public class ServiceController {
 	public void checkServices(){
 		
 		//user
+		/*
 		for(RegisteredService rs : registeredUserServices) {
 			String urlString = rs.getFullIp() + "/ping";
 			try {
@@ -101,7 +102,7 @@ public class ServiceController {
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
-		}
+		} */
 		
 		//post
 		for(RegisteredService rs : registeredPostServices) {
