@@ -75,7 +75,15 @@ public class SocialServiceEndpoint {
 			response.type("application/json");
 			System.out.println("Register-Request empfangen!");
 			
-			User user = new Gson().fromJson(request.body(), User.class);
+			JsonParser parser = new JsonParser();
+			JsonElement jsonTree = parser.parse(request.body());
+			JsonObject object = jsonTree.getAsJsonObject();
+			JsonElement t2 = object.get("username");
+			String username = t2.getAsString();
+			
+			User user = new User();
+			user.setName(username);
+			user.setUserId(username);
 			
 			try {
 				socialServiceUserDao.register(user);
