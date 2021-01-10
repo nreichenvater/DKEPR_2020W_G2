@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -31,6 +32,24 @@ public class PostController {
 		initRoutes();
 	}
 	
+	public PostController() {
+		httpClient = new OkHttpClient();
+		initRoutes();
+	}
+	
+	
+	public void setServiceController(ServiceController serviceController) {
+		this.serviceController = serviceController;
+	}
+
+	public void setUserController(UserController userController) {
+		this.userController = userController;
+	}
+
+	public void setSocialController(SocialController socialController) {
+		this.socialController = socialController;
+	}
+
 	public void initRoutes(){
 		
 		post("/post", (request,response) ->  {
@@ -235,5 +254,40 @@ public class PostController {
 		}
         
         return feed;
+	}
+	
+	public List<Post> getAllPosts(){
+		System.out.println("do sama jetza");
+		Request request = new Request.Builder()
+	            .url(serviceController.nextPostService().getFullIp() + "/posts")
+	            .get()
+	            .build();
+	        
+	        Response response;
+	        List<JsonObject> postStrings;
+			try {
+				response = httpClient.newCall(request).execute();
+				String resBody = response.body().string();
+				System.out.println(resBody);
+				postStrings = new Gson().fromJson(resBody, List.class);
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+				return null;
+			}
+			
+			System.out.println(postStrings.size());
+			System.out.println(postStrings.toString());
+			
+			for(JsonObject s : postStrings) {
+				System.out.println(s);
+			}
+			
+			List<Post> posts = new ArrayList<Post>();
+			for(JsonObject s : postStrings) {
+				posts.add(new Gson().fromJson(s, Post.class));
+			}
+			System.out.println(posts.size() + " + 2");
+		
+		return posts;
 	}
 }

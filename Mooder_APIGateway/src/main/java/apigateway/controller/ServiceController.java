@@ -107,7 +107,6 @@ public class ServiceController {
 		//post
 		for(RegisteredService rs : registeredPostServices) {
 			String urlString = rs.getFullIp() + "/ping";
-			System.out.println(urlString);
 			try {
 				URL url = new URL(urlString);
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -124,7 +123,6 @@ public class ServiceController {
 		//social
 		for(RegisteredService rs : registeredSocialServices) {
 			String urlString = rs.getFullIp() + "/ping";
-			System.out.println(urlString);
 			try {
 				URL url = new URL(urlString);
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();

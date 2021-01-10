@@ -12,6 +12,7 @@ import org.mongodb.morphia.query.UpdateOperations;
 import org.springframework.expression.spel.ast.Selection;
 import com.mongodb.MongoClient;
 import data.Post;
+import data.Postlists;
 public class PostDao {
 	MongoClient client = new MongoClient("localhost", 27017); //connect to mongodb
 	Datastore datastore = new Morphia().createDatastore(client, "PostServer");
@@ -25,6 +26,7 @@ public class PostDao {
 	}
 	public List<Post> getAllPosts(){
 		List<Post> posts = datastore.find(Post.class).asList();
+		System.out.println(posts.size());
 		if (posts!=null) {
 			return posts;
 		}
@@ -54,6 +56,32 @@ public class PostDao {
 	public List<Post> filterPosts(Query<Post> query, String user){
 		query.criteria("userid").equal(user);
 		return query.asList();
+	}
+	
+	public Post filterOnePost(Query<Post> query, String user){
+		query.order("-_id").criteria("userid").equal(user);
+		Post post=query.get();
+		System.out.println(post.getPost());
+		return post;
+	}
+	public List<Post> filterOtherPosts(Query<Post> query, String user){
+		query.order("-_id").criteria("userid").equal(user);
+		List<Post> test = new ArrayList<Post>();
+		test=query.asList();
+		test.remove(0);
+		return test;
+	}
+	public Postlists getonePostofSome(List<String> users) {
+		List<Post> res1 = new ArrayList<Post>();
+		List<Post> res2 = new ArrayList<Post>();
+		for(String i : users) {
+			res1.add(filterOnePost(datastore.find(Post.class),i));
+		}
+		for(String i : users) {
+			res2.addAll(filterOtherPosts(datastore.find(Post.class),i));
+		}
+		Postlists postlists=new Postlists(res1,res2);
+		return postlists;
 	}
 	
 }

@@ -18,6 +18,10 @@ public class Post {
 		this.timestamp = timestamp;
 		this.hashtags = hashtags;
 	}
+	
+	public Post() {
+		
+	}
 
 	public String getUserid() {
 		return userid;
@@ -57,6 +61,11 @@ public class Post {
 
 	public void setHashtags(ArrayList<String> hashtags) {
 		this.hashtags = hashtags;
+	}
+	
+	@Override
+	public String toString() {
+		return post;
 	}
 	
 }

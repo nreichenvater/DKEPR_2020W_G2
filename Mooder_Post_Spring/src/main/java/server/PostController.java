@@ -1,6 +1,7 @@
 package server;
 
 import java.sql.Timestamp;
+
 import java.time.Instant;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 
 import data.Post;
+
 @RestController
 public class PostController {
 	
@@ -25,23 +27,30 @@ public class PostController {
 		postDao = new PostDao();
 		post=new Post();
 	}
-	@GetMapping("/getAllPosts")
+	@GetMapping("/posts")
 	public List<Post> GetPosts() {
+		System.out.println("get posts");
 		 return postDao.getAllPosts();
 	}
 	@GetMapping("/getAllPostsofone/{userid}")
 	public List<Post> GetPostsofone(@PathVariable("userid") String userid) throws JsonProcessingException {
 		 return postDao.getAllPostsofOne(userid);
 	}
-	@PostMapping("/posts")
-	public String getfeed(@RequestBody List<String> users) {
-		return new Gson().toJson(postDao.getAllPostsofSome(users));
-	}
+	
 	@PostMapping("/post")
 	 public void create(@RequestBody Post post) {
 	  post.setTimestamp(Timestamp.from(Instant.now()));
 	  postDao.addPost(post);
 	 }
+	
+	@PostMapping("/feed")
+	public String getfeed(@RequestBody List<String> users) {
+		return new Gson().toJson(postDao.getAllPostsofSome(users));
+	}
+	@PostMapping("/recent")
+	public String getfeedofone(@RequestBody List<String> users) {
+		return new Gson().toJson(postDao.getonePostofSome(users));
+	}
 	
 	@GetMapping("/ping") 
 	public String ping() {

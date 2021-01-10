@@ -13,8 +13,11 @@ public class ServerController {
 		Spark.port(8081);
 		serviceController = new ServiceController();
 		userController = new UserController(serviceController);
-		socialController = new SocialController(serviceController, userController);
-		new PostController(serviceController, userController, socialController);
+		postController = new PostController();
+		socialController = new SocialController(serviceController, userController, postController);
+		postController.setServiceController(serviceController);
+		postController.setSocialController(socialController);
+		postController.setUserController(userController);
 	}
 	
 }

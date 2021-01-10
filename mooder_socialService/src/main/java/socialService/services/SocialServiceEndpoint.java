@@ -48,7 +48,15 @@ public class SocialServiceEndpoint {
 		get("/users", (request, response) -> {
 			response.type("application/json");
 			System.out.println("Request empfangen!");
-			return new Gson().toJson(socialServiceUserDao.getUsers());		
+
+			List<String> users = new ArrayList<String>();
+			
+			for(User u : socialServiceUserDao.getUsers()) {
+				System.out.println(u.getUserId());
+				users.add(u.getUserId());
+			}
+			
+			return new Gson().toJson(users);	
 		});
 		
 		post("/user", (request, response) -> {
@@ -140,8 +148,19 @@ public class SocialServiceEndpoint {
 			return new Gson().toJson(ResponseStatus.SUCCESS);
 		});
 		
-		
-		
+		get("/follower", (request, response) -> {
+			response.type("application/json");
+			String userId = request.headers("searchingUser");
+			
+			User u = socialServiceUserDao.getUser(userId);
+			List<String> users = new ArrayList<String>();
+			for(String f : u.getFollows()) {
+				users.add(f);
+			}
+
+			return new Gson().toJson(users);
+			
+		});
 		
 	}
 	
