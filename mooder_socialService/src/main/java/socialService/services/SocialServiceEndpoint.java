@@ -59,15 +59,11 @@ public class SocialServiceEndpoint {
 			return new Gson().toJson(users);	
 		});
 		
-		post("/user", (request, response) -> {
+		get("/user", (request, response) -> {
 			response.type("application/json");
 			System.out.println("User-Request empfangen!");
 	
-			JsonParser parser = new JsonParser();
-			JsonElement jsonTree = parser.parse(request.body());
-			JsonObject object = jsonTree.getAsJsonObject();
-			JsonElement t2 = object.get("userId");
-			String userId = t2.getAsString();
+			String userId = request.headers("userid");
 			
 			User u = socialServiceUserDao.getUser(userId);
 			List<String> users = new ArrayList<String>();

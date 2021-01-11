@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -15,6 +18,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import apigateway.dto.Post;
+import apigateway.dto.Postlists;
 
 public class PostController {
 
@@ -53,16 +57,15 @@ public class PostController {
 	public void initRoutes(){
 		
 		post("/post", (request,response) ->  {
-			System.out.println("erstellen");
-			//String authorization = request.headers("Authorization");
-			//String user = request.headers("user");
-			/*
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
+			
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
-			*/
-			int status = createPost(request.body(), "testuser");
+			
+			int status = createPost(request.body());
 			response.status(status);
 			if(status == 200) {
 				return "Der Post wurde erfolgreich angelegt";
@@ -89,26 +92,17 @@ public class PostController {
 			return "Der Post konnte nicht gelöscht werden";
 		});
 		
-		post("/feed", (request, response) -> {
-			//String authorization = request.headers("Authorization");
-			//String user = request.headers("user");
-			String user = "test";
+		get("/feed", (request, response) -> {
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
 			
-			
-			/*
-			 * User u = new User(user);
-			 * String requestBody = new Gson().toJson(u);
-			 */
-			
-			
-			/*
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
-			*/
-			System.out.println("body" + request.body());
-			List<String> users = socialController.getUserAndFollowed(user, request.body());
+			
+			List<String> users = socialController.getUserAndFollowed(user);
+			
 			if(users == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
@@ -124,14 +118,14 @@ public class PostController {
 			return new Gson().toJson(feed);
 		});
 		
-		post("/posts", (request, response) -> {
-			//String authorization = request.headers("Authorization");
-			//String user = request.headers("user");
-			String user = "seppHati1";
-			/*if(!userController.userLoggedIn(authorization, user)) {
+		get("/posts", (request, response) -> {
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
+			
+			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
-			}*/
+			}
 			
 			List<String> users = new ArrayList<String>();
 			users.add(user);
@@ -155,24 +149,30 @@ public class PostController {
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			
-			List<String> users = new ArrayList<String>();
-			users.add(user);
+			List<String> users = socialController.getUserAndFollowed(user);
+			
+			if(users == null) {
+				response.status(500);
+				return "Der Feed konnte nicht geladen werden";
+			}
 				
-			List<Post> feed = getRecent(users);
-			if(feed == null) {
+			String feed = getRecent(users);
+			System.out.println(feed);
+			Postlists pl = new Gson().fromJson(feed, Postlists.class);
+			System.out.println(pl.toString());
+			if(pl == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
 			}
 			
 			response.status(200);
-			return new Gson().toJson(feed);
+			return new Gson().toJson(pl);
 		});
 		
 	}
 	
-	private int createPost(String requestBody, String user) {
-		System.out.println("create post start");
-		System.out.println("request body: " + requestBody);
+	private int createPost(String requestBody) {
+		
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()
@@ -218,7 +218,7 @@ public class PostController {
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()
-            .url(serviceController.nextPostService().getFullIp() + "/posts")
+            .url(serviceController.nextPostService().getFullIp() + "/feed")
             .post(body)
             .build();
         
@@ -235,8 +235,9 @@ public class PostController {
 		return feed;
 	}
 	
-	private List<Post> getRecent(List<String> users) {
+	private String getRecent(List<String> users) {
 		String requestBody = new Gson().toJson(users);
+		System.out.println(users);
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()
@@ -245,15 +246,16 @@ public class PostController {
             .build();
         
         Response response;
-        List<Post> feed;
+        String posts;
 		try {
 			response = httpClient.newCall(request).execute();
-			feed = new Gson().fromJson(response.body().string(), List.class);
+			posts = response.body().string();
+			System.out.println(posts);
 		} catch (IOException e) {
 			return null;
 		}
         
-        return feed;
+        return posts;
 	}
 	
 	public List<Post> getAllPosts(){
@@ -264,29 +266,26 @@ public class PostController {
 	            .build();
 	        
 	        Response response;
-	        List<JsonObject> postStrings;
+	        List<Post> posts = new ArrayList<Post>();
+	        JsonParser parser = new JsonParser();
 			try {
 				response = httpClient.newCall(request).execute();
-				String resBody = response.body().string();
-				System.out.println(resBody);
-				postStrings = new Gson().fromJson(resBody, List.class);
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
+				String body = "{\"postArray\":" + response.body().string() + "}";
+				
+				JsonObject obj = parser.parse(body).getAsJsonObject();
+				JsonArray arr = obj.getAsJsonArray("postArray");
+				
+				for(JsonElement je : arr) {
+					JsonObject o = je.getAsJsonObject();
+					o.remove("timestamp");
+					System.out.println(o.toString());
+					posts.add(new Gson().fromJson(o, Post.class));
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
 				return null;
 			}
-			
-			System.out.println(postStrings.size());
-			System.out.println(postStrings.toString());
-			
-			for(JsonObject s : postStrings) {
-				System.out.println(s);
-			}
-			
-			List<Post> posts = new ArrayList<Post>();
-			for(JsonObject s : postStrings) {
-				posts.add(new Gson().fromJson(s, Post.class));
-			}
-			System.out.println(posts.size() + " + 2");
 		
 		return posts;
 	}

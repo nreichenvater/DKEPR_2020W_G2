@@ -37,7 +37,7 @@ public class AuthController {
     public ResponseEntity<?> ping() throws Exception {
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
+    
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws Exception {
         try {
@@ -50,10 +50,7 @@ public class AuthController {
         }
         UserDetails userdetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtUtil.generateToken(userdetails);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Authorization", token);
-        responseHeaders.set("username", userdetails.getUsername());
-        return ResponseEntity.ok().headers(responseHeaders).body("200");
+        return ResponseEntity.ok(new AuthResponse(token, userdetails.getUsername()));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

@@ -31,6 +31,7 @@ public class SocialController {
 	public SocialController(ServiceController serviceController, UserController userController, PostController postController) {
 		this.serviceController = serviceController;
 		this.postController = postController;
+		this.userController = userController;
 		httpClient = new OkHttpClient();
 		initRoutes();
 	}
@@ -40,13 +41,34 @@ public class SocialController {
 		post("/follow", (request,response) ->  {
 			String authorization = request.headers("Authorization");
 			String user = request.headers("user");
-			/*
+			
 			if(!userController.userLoggedIn(authorization, user)) {
 				response.status(403);
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
-			*/
-			int status = follow(request.body(), user);
+			
+			System.out.println(request.headers().toString());
+			System.out.println("follow request body" + request.body());
+			
+			int status = follow(request.body());
+			response.status(status);
+			if(status == 200) {
+				return "Der Follow wurde erfolgreich angelegt";
+			}
+			
+			return "Der Follow konnte nicht angelegt werden";
+		});
+		
+		post("/unfollow", (request,response) ->  {
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
+			
+			if(!userController.userLoggedIn(authorization, user)) {
+				response.status(403);
+				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
+			}
+			
+			int status = unfollow(request.body());
 			response.status(status);
 			if(status == 200) {
 				return "Der Follow wurde erfolgreich angelegt";
@@ -64,7 +86,7 @@ public class SocialController {
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			
-			List<String> users = getUserAndFollowed(user, request.body());
+			List<String> users = getUserAndFollowed(user);
 			if(users == null) {
 				response.status(500);
 				return "Der Feed konnte nicht geladen werden";
@@ -99,12 +121,10 @@ public class SocialController {
 				}
 			}
 			
-			System.out.println("filteredUsers: " + allUsers.get(0));
 			
 			//Liste der follower des Searching User holen
 			List<String> followers = getFollower(searchingUser);
 			
-			System.out.println("followers: " + followers.get(0));
 			
 			//Merging
 			List<User> searchResultListUsers = new ArrayList<User>();
@@ -120,20 +140,16 @@ public class SocialController {
 			}
 			result.setSearchResultUsers(searchResultListUsers);
 			
-			System.out.println("searchResultListUsers: " + searchResultListUsers.get(0));
-			
 			
 			//Post-Suche
 			List<Post> posts = postController.getAllPosts();
 			System.out.println(posts.size() + " + 3");
 			
-			System.out.println("posts: " + posts.get(0).toString());
-			
 			//Suche im Post String
 			List<Post> filteredPosts = new ArrayList<Post>();
 			for(Post post : posts) {
 				System.out.println(post.toString());
-				if(post.getPost().toLowerCase().contains(searchString.toLowerCase())) {
+				if(post.getPost().toLowerCase().contains(searchString.toLowerCase()) || post.getUserid().toLowerCase().contains(searchString.toLowerCase())) {
 					System.out.println("found post: " + post.getPost());
 					filteredPosts.add(post);
 				}
@@ -146,13 +162,12 @@ public class SocialController {
 		});
 	}
 
-	public List<String> getUserAndFollowed(String user, String requestBody) {
-		
-		RequestBody body = RequestBody.create(JSON, requestBody);
+	public List<String> getUserAndFollowed(String user) {
 		
         Request request = new Request.Builder()
             .url(serviceController.nextSocialService().getFullIp() + "/user")
-            .post(body)
+            .get()
+            .addHeader("userid", user)
             .build();
         
         Response response;
@@ -168,17 +183,35 @@ public class SocialController {
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
+		
+		System.out.println(responseBody);
         
-        List<String> users = new Gson().fromJson(responseBody, List.class);
-        
-        return users;
+        return new Gson().fromJson(responseBody, List.class);
 	}
 	
-	private int follow(String requestBody, String user) {
+	private int follow(String requestBody) {
 		RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()
             .url(serviceController.nextSocialService().getFullIp() + "/follow")
+            .post(body)
+            .build();
+        
+        Response response;
+		try {
+			response = httpClient.newCall(request).execute();
+		} catch (IOException e) {
+			return 0;
+		}
+        
+        return response.code();
+	}
+	
+	private int unfollow(String requestBody) {
+		RequestBody body = RequestBody.create(JSON, requestBody);
+		
+        Request request = new Request.Builder()
+            .url(serviceController.nextSocialService().getFullIp() + "/unfollow")
             .post(body)
             .build();
         

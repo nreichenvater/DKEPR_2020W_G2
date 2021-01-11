@@ -65,8 +65,13 @@ public class UserController {
 		get("/user", (request,response) -> {
 			String authorization = request.headers("Authorization");
 			String user = request.headers("user");
-			JsonObject userResponse = doGetRequest(authorization, user, serviceController.nextUserService().getFullIp() + "/user");
-			return userResponse;
+			//JsonObject userResponse = doGetRequest(authorization, user, serviceController.nextUserService().getFullIp() + "/user");
+			if(userLoggedIn(authorization, user)) {
+				response.status(200);
+				return "Token in Ordnung";
+			}
+			response.status(403);
+			return "Token nicht in Ordnung";
 		});
 		
 		delete("/user", (request,response) -> {
@@ -128,7 +133,6 @@ public class UserController {
 		authorization = "Bearer " + authorization;
 		con.setRequestProperty("Authorization", authorization);
 		con.setRequestProperty("username", user);
-		//con.setDoOutput(true);
         
         InputStream inputStream = new BufferedInputStream(con.getInputStream());
         JsonParser jsonParser = new JsonParser();
@@ -160,18 +164,7 @@ public class UserController {
 	private int deleteUser(String service, String requestUrl, String username) throws IOException {
 		
 		String requestBody = "{ \"username\": \"" + username + "\" }";
-		/*
-		URL url = new URL(requestUrl);
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("DELETE");
-		con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-		con.setRequestProperty("Accept", "application/json");
-		con.setDoOutput(true);
 		
-		OutputStream os = con.getOutputStream();
-        os.write(usernameJson.getBytes("UTF-8"));
-        os.close();
-        */
         RequestBody body = RequestBody.create(JSON, requestBody);
 		
         Request request = new Request.Builder()
@@ -192,20 +185,25 @@ public class UserController {
 	
 	boolean userLoggedIn(String authorization, String user) throws IOException {
 		
-		URL url = new URL(serviceController.nextUserService().getFullIp() + "/user");
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("GET");
-		//con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-		con.setRequestProperty("Accept", "application/json");
-		con.setRequestProperty("Authorization", authorization);
-		con.setRequestProperty("user", user);
-		//con.setDoOutput(true);
-        
-        InputStream inputStream = new BufferedInputStream(con.getInputStream());
-        JsonParser jsonParser = new JsonParser();
-        
-        JsonObject userResponse = (JsonObject)jsonParser.parse(new InputStreamReader(inputStream, "UTF-8"));
-        if(userResponse.get("status").getAsInt() == 200) {
+		System.out.println("token = " + authorization);
+		System.out.println("user = " + user);
+		
+		Request request = new Request.Builder()
+	            .url(serviceController.nextUserService().getFullIp()  + "/user")
+	            .get()
+	            .addHeader("username", user)
+			 	.addHeader("Authorization", authorization)
+	            .build();
+		
+		 Response response;
+			try {
+				response = httpClient.newCall(request).execute();
+				System.out.println(response.body().string());
+			} catch (IOException e) {
+				return false;
+			}
+		
+        if(response.code() == 200) {
         	return true;
         }
         return false;

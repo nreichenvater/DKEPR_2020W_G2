@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@RequestBody String username) throws Exception {
+    public ResponseEntity<?> getUser(@RequestHeader("username") String username) throws Exception {
         return ResponseEntity.ok(userService.loadUserByUsername(username));
     }
 

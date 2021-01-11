@@ -61,24 +61,31 @@ public class PostDao {
 	public Post filterOnePost(Query<Post> query, String user){
 		query.order("-_id").criteria("userid").equal(user);
 		Post post=query.get();
-		System.out.println(post.getPost());
 		return post;
 	}
 	public List<Post> filterOtherPosts(Query<Post> query, String user){
 		query.order("-_id").criteria("userid").equal(user);
 		List<Post> test = new ArrayList<Post>();
 		test=query.asList();
-		test.remove(0);
+		if(test.size() > 0) {
+			test.remove(0);
+		}
 		return test;
 	}
 	public Postlists getonePostofSome(List<String> users) {
 		List<Post> res1 = new ArrayList<Post>();
 		List<Post> res2 = new ArrayList<Post>();
 		for(String i : users) {
-			res1.add(filterOnePost(datastore.find(Post.class),i));
+			Post p = filterOnePost(datastore.find(Post.class),i);
+			if(p != null) {
+				res1.add(p);
+			}
 		}
 		for(String i : users) {
-			res2.addAll(filterOtherPosts(datastore.find(Post.class),i));
+			List<Post> p = filterOtherPosts(datastore.find(Post.class),i);
+			if(p.size() > 0) {
+				res2.addAll(p);
+			}
 		}
 		Postlists postlists=new Postlists(res1,res2);
 		return postlists;

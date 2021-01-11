@@ -3,20 +3,24 @@ package apigateway.dto;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.bson.types.ObjectId;
+
 public class Post {
 	
+	private ObjectId _id;
 	private String userid;
 	private String post;
 	private String mood;
 	private Timestamp timestamp;
 	private ArrayList<String> hashtags; 
 	
-	public Post(String userid, String post, String mood, Timestamp timestamp, ArrayList<String> hashtags) {
+	public Post(String userid, String post, String mood, ArrayList<String> hashtags, ObjectId _id) {
 		this.userid = userid;
 		this.post = post;
 		this.mood = mood;
-		this.timestamp = timestamp;
+		//this.timestamp = timestamp;
 		this.hashtags = hashtags;
+		this._id = _id;
 	}
 	
 	public Post() {
