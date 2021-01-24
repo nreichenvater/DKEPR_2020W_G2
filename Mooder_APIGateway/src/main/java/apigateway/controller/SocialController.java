@@ -92,8 +92,6 @@ public class SocialController {
 				return "Der Feed konnte nicht geladen werden";
 			}
 			
-			//ersten eintrag löschen (user selbst)
-			
 			response.status(200);
 			return new Gson().toJson(users);
 		});
@@ -159,6 +157,41 @@ public class SocialController {
 			System.out.println("result: " + result.toString());
 			
 			return new Gson().toJson(result, SearchResult.class);
+		});
+		
+		get("/visibility", (request, response) -> {
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
+			
+			if(!userController.userLoggedIn(authorization, user)) {
+				response.status(403);
+				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
+			}
+			
+			return isUserPrivate(user);
+		});
+		
+		patch("/visibility", (request, response) -> {
+			String authorization = request.headers("Authorization");
+			String user = request.headers("user");
+			
+			if(!userController.userLoggedIn(authorization, user)) {
+				response.status(403);
+				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
+			}
+			
+			JsonParser parser = new JsonParser();
+			JsonElement jsonTree = parser.parse(request.body());
+			JsonObject object = jsonTree.getAsJsonObject();
+			JsonElement t2 = object.get("visible");
+			boolean visible = t2.getAsBoolean();
+			
+			if(setVisibility(user, visible)) {
+				return "Erfolg";
+			}
+			
+			response.status(500);
+			return "Fehler";
 		});
 	}
 
@@ -274,6 +307,14 @@ public class SocialController {
 		}
 			
 		return new Gson().fromJson(res, List.class);	
+	}
+	
+	private boolean isUserPrivate(String user) {
+		return false;
+	}
+	
+	private boolean setVisibility(String user, boolean visible) {
+		return true;
 	}
 
 }
