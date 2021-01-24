@@ -121,4 +121,43 @@ public class SocialServiceUserDao {
 		System.out.println(callingUserId + " folgt nun "+ unfollowUserId + " nicht mehr");
 	}
 	
+	
+	public void updatePrivacy(String user, boolean visible) {
+		
+		session.writeTransaction(new TransactionWork<String>()
+		{
+			@Override
+			public String execute(Transaction tx) {
+				String isPrivate = "";
+				if(visible) {
+					isPrivate = "false";
+				}else {
+					isPrivate = "true";
+				}
+				Result res = tx.run("MATCH (n:User) WHERE n.userId = $userId SET n.private = $private return n"
+						, parameters("userId",user,"private",isPrivate));
+				return "Success";
+			}
+		});
+		
+	}
+	
+	public String getVisibility(String userId) {
+		String isPrivate = session.readTransaction(new TransactionWork<String>()
+		{			
+			@Override
+			public String execute(Transaction tx){
+				Result res = tx.run("MATCH (n:User) WHERE n.userId = $userId return n.private AS private", parameters("userId",userId));
+				Record r = res.single();
+				String result = r.get("private").asString();
+				return result;
+			}
+			
+		});
+		if(isPrivate.equals("false")) {
+			return "true";
+		}else {
+			return "false";
+		}
+	}
 }

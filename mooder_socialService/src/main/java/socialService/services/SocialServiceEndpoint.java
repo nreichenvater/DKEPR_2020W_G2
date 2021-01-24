@@ -158,6 +158,31 @@ public class SocialServiceEndpoint {
 			
 		});
 		
+		get("/visibility", (request, response) -> {
+			response.type("application/json");
+			String userId = request.headers("user");
+			
+			return socialServiceUserDao.getVisibility(userId);
+		});
+		
+		patch("/visibility", (request, response) -> {
+			String userId = request.headers("user");
+			JsonParser parser = new JsonParser();
+			JsonElement jsonTree = parser.parse(request.body());
+			JsonObject object = jsonTree.getAsJsonObject();
+			JsonElement t2 = object.get("visible");
+			boolean visible = t2.getAsBoolean();
+			
+			try {
+				socialServiceUserDao.updatePrivacy(userId, visible);
+			}catch(Exception e) {
+				e.printStackTrace();
+				return new Gson().toJson(ResponseStatus.ERROR);
+			}
+			
+			return new Gson().toJson(ResponseStatus.SUCCESS);
+		});
+		
 	}
 	
 }

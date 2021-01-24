@@ -168,7 +168,14 @@ public class SocialController {
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			
-			return isUserPrivate(user);
+			
+			String isUserPrivate = isUserPrivate(user);
+			
+			if(isUserPrivate.equals("true")) {
+				return true;
+			}else {
+				return false;
+			}
 		});
 		
 		patch("/visibility", (request, response) -> {
@@ -180,13 +187,7 @@ public class SocialController {
 				return "Ihre Session ist abgelaufen, bitte melden Sie sich erneut an.";
 			}
 			
-			JsonParser parser = new JsonParser();
-			JsonElement jsonTree = parser.parse(request.body());
-			JsonObject object = jsonTree.getAsJsonObject();
-			JsonElement t2 = object.get("visible");
-			boolean visible = t2.getAsBoolean();
-			
-			if(setVisibility(user, visible)) {
+			if(setVisibility(user, request.body())) {
 				return "Erfolg";
 			}
 			
@@ -309,12 +310,58 @@ public class SocialController {
 		return new Gson().fromJson(res, List.class);	
 	}
 	
-	private boolean isUserPrivate(String user) {
-		return false;
+	private String isUserPrivate(String user) {
+		 Request request = new Request.Builder()
+		            .url(serviceController.nextSocialService().getFullIp() + "/visibility")
+		            .get()
+		            .addHeader("user", user)
+		            .build();
+		 
+		 Response response;
+		 try {
+			response = httpClient.newCall(request).execute();
+		 } catch (IOException e) {
+			return null;
+		 }
+		 
+		 String res = "";
+			
+		 try {
+			res = response.body().string();
+		 } catch (IOException e) {
+			System.out.println(e.getMessage());
+		 }
+		 
+		 return res;
+		 
 	}
 	
-	private boolean setVisibility(String user, boolean visible) {
-		return true;
+	private boolean setVisibility(String user, String requestBody) {
+		RequestBody body = RequestBody.create(JSON, requestBody);
+		Request request = new Request.Builder()
+	            .url(serviceController.nextSocialService().getFullIp() + "/visibility")
+	            .patch(body)
+	            .addHeader("user", user)
+	            .build();
+	 
+		Response response;
+		try {
+			response = httpClient.newCall(request).execute();
+		} catch (IOException e) {
+			return false;
+		}
+		
+		try {
+			response = httpClient.newCall(request).execute();
+		} catch (IOException e) {
+			return false;
+		}
+        
+        if(response.code() == 200) {
+        	return true;
+        }else {
+        	return false;
+        }
 	}
 
 }
