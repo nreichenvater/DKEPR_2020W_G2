@@ -123,6 +123,10 @@ public class SocialController {
 			//Liste der follower des Searching User holen
 			List<String> followers = getFollower(searchingUser);
 			
+			System.out.println("followers " + followers.toString());
+			
+			List<String> privateAndNotFollowedUsers = getPrivateAndNotFollowedUsers(searchingUser);
+	
 			
 			//Merging
 			List<User> searchResultListUsers = new ArrayList<User>();
@@ -133,11 +137,20 @@ public class SocialController {
 						follows = true;
 					}
 				}
-				searchResultListUsers.add(new User(user, follows));
-				
+				boolean userVisible = true;
+				for(String s : privateAndNotFollowedUsers) {
+					if(s.equals(user)){
+						userVisible = false;
+					}
+				}
+				if(userVisible) {
+					searchResultListUsers.add(new User(user, follows));
+				}
 			}
+			
 			result.setSearchResultUsers(searchResultListUsers);
 			
+			System.out.println("result " + result.getSearchResultUsers().size());
 			
 			//Post-Suche
 			List<Post> posts = postController.getAllPosts();
@@ -149,9 +162,18 @@ public class SocialController {
 				System.out.println(post.toString());
 				if(post.getPost().toLowerCase().contains(searchString.toLowerCase()) || post.getUserid().toLowerCase().contains(searchString.toLowerCase())) {
 					System.out.println("found post: " + post.getPost());
-					filteredPosts.add(post);
+					boolean postVisible = true;
+					for(String s : privateAndNotFollowedUsers) {
+						if(post.getUserid().equals(s)) {
+							postVisible = false;
+						}
+					}
+					if(postVisible) {
+						filteredPosts.add(post);
+					}
 				}
 			}
+			
 			result.setSearchResultPosts(filteredPosts);
 			
 			System.out.println("result: " + result.toString());
@@ -362,6 +384,31 @@ public class SocialController {
         }else {
         	return false;
         }
+	}
+	
+	private List<String> getPrivateAndNotFollowedUsers(String user){
+		Request request = new Request.Builder()
+	            .url(serviceController.nextSocialService().getFullIp() + "/private")
+	            .get()
+	            .addHeader("user", user)
+	            .build();
+	 
+	 Response response = null;
+		try {
+			response = httpClient.newCall(request).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	String res = "";
+	
+	try {
+		res = response.body().string();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+		
+	return new Gson().fromJson(res, List.class);
 	}
 
 }

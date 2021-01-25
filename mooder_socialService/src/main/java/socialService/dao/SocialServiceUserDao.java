@@ -160,4 +160,25 @@ public class SocialServiceUserDao {
 			return "false";
 		}
 	}
+	
+	public List<String> getPrivateAndNotFollowed(String userId){
+		return session.readTransaction(new TransactionWork<List<String>>() {
+			@Override
+			public List<String> execute(Transaction tx){
+				List<String> users = new ArrayList<String>();
+				Result res = tx.run("MATCH (n:User), (m:User)\r\n" + 
+						"WHERE NOT (n:User) - [:follows] -> (m:User)\r\n" + 
+						"AND n.userId = $userId\r\n" + 
+						"AND m.userId <> $userId\r\n" + 
+						"AND m.private = 'true'\r\n" + 
+						"RETURN m.userId as userId", parameters("userId",userId));
+				while(res.hasNext()) {
+					Record r = res.next();
+					String userId = r.get("userId").asString();
+					users.add(userId);
+				}
+				return users;
+			}
+		});
+	}
 }

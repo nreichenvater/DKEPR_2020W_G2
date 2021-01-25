@@ -183,6 +183,17 @@ public class SocialServiceEndpoint {
 			return new Gson().toJson(ResponseStatus.SUCCESS);
 		});
 		
+		get("/private", (request, response) -> {
+			response.type("application/json");
+			String userId = request.headers("user");
+			
+			List<String> res = socialServiceUserDao.getPrivateAndNotFollowed(userId);
+			
+			System.out.println(res.toString());
+			
+			return res;
+		});
+		
 	}
 	
 }
