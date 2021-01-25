@@ -1,12 +1,13 @@
 import Router from "next/router";
 import React, { Component } from "react";
 import Auth from "../components/auth/authservice";
+import API from '../api';
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: "",
+      user: "",
       password: "",
     };
   }
@@ -22,13 +23,13 @@ export default class Login extends Component {
     }
     console.log(this);
     const body = {
-      mail: this.state.mail,
+      username: this.state.user,
       password: this.state.password,
     };
     Auth.login(body, (res) => {
         if (res.status === 200) {
           Router.push('/');
-          document.getElementById("loginmailinput").value = "";
+          document.getElementById("loginuserinput").value = "";
           document.getElementById("loginpasswordinput").value = "";
         } else {
           console.log("Fehler");
@@ -38,8 +39,8 @@ export default class Login extends Component {
 
   handleChange(e) {
     e.preventDefault();
-    if (e.target.id === "loginmailinput") {
-      this.setState({ mail: e.target.value });
+    if (e.target.id === "loginuserinput") {
+      this.setState({ user: e.target.value });
     } else if (e.target.id === "loginpasswordinput") {
       this.setState({ password: e.target.value });
     }
@@ -49,7 +50,7 @@ export default class Login extends Component {
     if (e) {
       e.preventDefault();
     }
-    document.getElementById("loginmailinput").value = "";
+    document.getElementById("loginuserinput").value = "";
     document.getElementById("loginpasswordinput").value = "";
     Router.push('/register');
   }
@@ -86,11 +87,11 @@ export default class Login extends Component {
                   onChange={this.handleChange.bind(this)}
                   type="text"
                   class="logintextfield mail w-input"
-                  maxlength="256"
+                  maxLength="256"
                   name="field"
                   data-name="Field"
                   placeholder="Username"
-                  id="loginmailinput"
+                  id="loginuserinput"
                   required=""
                 />
                 <input

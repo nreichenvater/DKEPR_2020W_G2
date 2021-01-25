@@ -1,4 +1,5 @@
 
+import API from '../../api';
 
 class AuthService {
     constructor(){
@@ -11,8 +12,8 @@ class AuthService {
         .then(res => {
             if(res.status === 200){
                 console.log(res);
-                localStorage.setItem('user', res.data.user.mail);
-                localStorage.setItem('Authorization', res.headers.authorization);
+                localStorage.setItem('user', res.data.username);
+                localStorage.setItem('Authorization', res.data.token);
                 callback(res);
             }
         })
@@ -28,11 +29,8 @@ class AuthService {
     }
 
     async isLoggedIn(){
-        return new Promise((resolve, reject) => {
-            resolve(true);
-        });
-        /*
         console.log("checke eingeloggt mit token " + localStorage.getItem('Authorization'));
+
         if(this.hasToken()){
             return new Promise((resolve, reject) => {
                 API.get('/user', this.getHeader())
@@ -52,24 +50,24 @@ class AuthService {
         else {
             console.log("kein token");
             return false;
-        } */
+        }
     }
 
     register(mailInput, passwordInput, repeatedPasswordInput, successCallback){
 
-            API.post(`/register`, {
-                mail: mailInput,
-                password: passwordInput,
-                passwordConfirm: repeatedPasswordInput
-            })
-            .then(res => {
-                if(res.status === 200){
-                    successCallback(res);
-                }
-            })
-            .catch(err => {
-                successCallback(err);
-            });
+        API.post(`/register`, {
+            username: mailInput,
+            password: passwordInput,
+            repeatedPassword: repeatedPasswordInput
+        })
+        .then(res => {
+            if(res.status === 200){
+                successCallback(res);
+            }
+        })
+        .catch(err => {
+            successCallback(err);
+        });
     }
 
     hasToken(){
@@ -80,10 +78,11 @@ class AuthService {
     }
 
     getHeader(){
+        const token = "Bearer " + localStorage.getItem('Authorization');
         return Object.create({
             headers: {
-                Authorization: localStorage.getItem('Authorization'),
-                Username: localStorage.getItem('user')
+                Authorization: token,
+                user: localStorage.getItem('user')
             }
         });
     }

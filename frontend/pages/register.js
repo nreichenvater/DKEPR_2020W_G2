@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import Auth from "../components/auth/authservice";
 import Router from "next/router";
+import API from '../api';
 
 export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: "",
+      user: "",
       password: "",
       repeatedPassword: "",
     };
@@ -23,8 +24,8 @@ export default class Register extends Component {
     }
     let id = e.target.id;
     let val = e.target.value;
-    if (id === "registerMail") {
-      this.setState({ mail: val });
+    if (id === "registerUser") {
+      this.setState({ user: val });
     } else if (id === "registerPassword") {
       this.setState({ password: val });
     } else if (id === "registerRepeatedPassword") {
@@ -38,7 +39,7 @@ export default class Register extends Component {
     }
 
     console.log(
-      this.state.mail +
+      this.state.user +
         " " +
         this.state.password +
         " " +
@@ -46,18 +47,18 @@ export default class Register extends Component {
     );
 
     Auth.register(
-      this.state.mail,
+      this.state.user,
       this.state.password,
       this.state.repeatedPassword,
       (res) => {
         if (res.status === 200) {
-          console.log("Erfolg");
+          console.log("Erfolgreich registriert");
           Router.push('/login');
-          document.getElementById("registerMail").value = "";
+          document.getElementById("registerUser").value = "";
           document.getElementById("registerPassword").value = "";
           document.getElementById("registerRepeatedPassword").value = "";
         } else {
-          console.log("Fehler");
+          console.log("Fehler beim Registrieren");
         }
       }
     );
@@ -108,7 +109,7 @@ export default class Register extends Component {
                   name="field"
                   data-name="Field"
                   placeholder="Username"
-                  id="registerMail"
+                  id="registerUser"
                   required=""
                 />
                 <input

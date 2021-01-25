@@ -3,6 +3,7 @@ import Link from 'next/link';
 import API from '../api';
 import Auth from '../components/auth/authservice';
 import withAuth from '../components/auth/withAuth';
+import Router from 'next/router';
 
 class Home extends Component{
     constructor(props){
@@ -15,18 +16,13 @@ class Home extends Component{
     }
 
     componentDidMount(){
-
-        localStorage.setItem('user', 'seppHati1');
-
-        let body = {
-            userId: "seppHati1"
-        }
         
-        API.post('/feed', body, Auth.getHeader())
+        API.get('/feed', Auth.getHeader())
         .then(res => {
             if(res.status === 200){
                 const posts = res.data;
-                this.setState({ posts }, () => console.log(this.state.posts));
+                posts.sort(function(a, b){return b._id.timestamp - a._id.timestamp});
+                this.setState({ posts });
                 console.log(res);
             }
         })
@@ -40,7 +36,7 @@ class Home extends Component{
             e.preventDefault();
         }
         if(e.target.id === "moodInput"){
-            this.setState({ moodText: e.target.value }, () => console.log(this.state.moodText));
+            this.setState({ moodText: e.target.value });
         }
     }
 
@@ -72,22 +68,28 @@ class Home extends Component{
     }
 
     refreshPosts() {
-        console.log("do jetza");
-        let body = {
-            userId: "seppHati1"
-        }
         
-        API.post('/feed', body, Auth.getHeader())
+        API.get('/feed', Auth.getHeader())
         .then(res => {
             if(res.status === 200){
                 const posts = res.data;
-                this.setState({ posts }, () => console.log(this.state.posts));
+                posts.sort(function(a, b){return b._id.timestamp - a._id.timestamp});
+                this.setState({ posts });
                 console.log(res);
             }
         })
         .catch(err => {
             console.log(err);
         });
+    }
+
+    logOut = (e) => {
+        if(e){
+            e.preventDefault();
+        }
+        localStorage.removeItem("Authorization");
+        localStorage.removeItem("user");
+        Router.push("/login");
     }
 
     render(){
@@ -99,11 +101,8 @@ class Home extends Component{
                             <Link href="/"><a href="#" className="logo">Mooder</a></Link>
                             <div class="headerspace" />
                             <ul className="headermenu">
-                                {
-                                    this.state.loggedIn ?
-                                    <li className="headermenuitem">Ausloggen</li>
-                                    : <div><li className="headermenuitem fat">Registrieren</li><li className="headermenuitem">Einloggen</li></div>
-                                }
+                                <li className="headermenuitem">Hallo, {localStorage.getItem("user")}!</li>
+                                <li><a className="headermenuitem" onClick={this.logOut} >Ausloggen</a></li>
                             </ul>
                         </div>
                     </div>
@@ -115,8 +114,9 @@ class Home extends Component{
                                 <Link href="/"><a href="#" className="sidemenulistentry selected">Feed / Post Erstellen</a></Link>
                                 <Link href="/recentposts"><a href="#" className="sidemenulistentry">Aktuelle Posts</a></Link>
                                 <Link href="/personalposts"><a href="#" className="sidemenulistentry">Meine Posts</a></Link>
-                                <a href="#" className="sidemenulistentry">Freunde</a>
-                                <a href="#" className="sidemenulistentry">Suche</a>
+                                <Link href="/friends"><a href="#" className="sidemenulistentry">Freunde</a></Link>
+                                <Link href="/search"><a href="#" className="sidemenulistentry">Suche</a></Link>
+                                <Link href="/settings"><a href="#" className="sidemenulistentry">Einstellungen</a></Link>
                             </div>
                         </div>
                         <div className="contentdiv">
